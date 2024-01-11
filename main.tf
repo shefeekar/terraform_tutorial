@@ -96,4 +96,12 @@ resource "aws_default_security_group" "default_sec_group" {
   description = "for allowing http"
   cidr_blocks  = ["0.0.0.0/0"]
  }
+ egress{
+  description  = "Allow outgoing traffic to all protocols and all destination IP addresses"
+ from_port   = 0
+  to_port     = 0
+  protocol    = "-1" # All protocols
+  cidr_blocks = ["0.0.0.0/0"] # All destinations
+  
+ }
 }
