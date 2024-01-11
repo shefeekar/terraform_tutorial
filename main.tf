@@ -16,10 +16,18 @@ provider "aws"{
   region     = var.region
   access_key = "AKIA52LJEQNMWCTT53NX"
   secret_key = "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"
-  endpoint{
+  endpoints{
     ec2 = "http://localhost:4566"
     }
 } 
+resource "aws_instance" "web-server-instance" {
+  ami           = "ami-0c7217cdde317cfec"# Amazon Linux 2 AMI ID (you can choose a different one)
+  instance_type = "t2.micro"             # Change this to your desired instance type
+
+  
+  
+  }
+  
 
 # Creating a VPC
 resource "aws_vpc" "main" {
@@ -64,16 +72,28 @@ resource "aws_default_route_table" "main_vpc_default_rt" {
 resource "aws_default_security_group" "default_sec_group" {
   vpc_id = aws_vpc.main.id
   tags = {
-    "Name" = "Default Security Group"
-
+    "Name" = "Default Security Groupz"
 
   }
-}
-resource "aws_vpc_security_group_ingress_rule" "HTTP" {
-  security_group_id = aws_default_security_group.default_sec_group.id
-
-  cidr_ipv4   = "10.0.0.0/8"
+  ingress {
+   description = "ssh ingress"
+   from_port   = 22
+   to_port     = 22
+   protocol    = "tcp"
+   cidr_blocks = ["0.0.0.0/0"]
+ }
+ ingress{
+  description = "smtp ingress"
+  from_port   = 25
+  to_port     = 25
+  protocol    = "tcp"
+  cidr_blocks  = ["0.0.0.0/0"]
+ }
+ ingress{
   from_port   = 80
-  ip_protocol = "tcp"
   to_port     = 80
+  protocol    ="tcp"
+  description = "for allowing http"
+  cidr_blocks  = ["0.0.0.0/0"]
+ }
 }
